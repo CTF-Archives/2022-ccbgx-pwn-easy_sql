@@ -34,12 +34,13 @@ RUN rm -rf /home/ctf/lib/apt /home/ctf/lib/cpp /home/ctf/lib/gnupg /home/ctf/lib
 COPY ./ctf.xinetd /etc/xinetd.d/ctf
 COPY ./run.sh /home/ctf
 COPY ./pwn /home/ctf
-COPY ./flag /home/ctf
+RUN touch /home/ctf/flag
 
 RUN chmod +x /home/ctf/*
 RUN chown -R root:ctf /home/ctf
 RUN chmod -R 750 /home/ctf
 RUN chmod 777 /home/ctf
+RUN chmod 777 /home/ctf/flag
 
 RUN touch /home/ctf/*
 RUN touch /home/ctf/*/*
@@ -48,8 +49,7 @@ COPY ./libsqlite3.so.0.8.6 /home/ctf/lib/x86_64-linux-gnu/libsqlite3.so.0
 RUN echo "Blocked by ctf_xinetd" > /etc/banner_fail
 RUN echo 'ctf - nproc 1500' >>/etc/security/limits.conf
 
-
-
-CMD exec /bin/bash -c "/etc/init.d/xinetd start; trap : TERM INT; sleep infinity & wait"
+COPY ./start.sh /start.sh
+ENTRYPOINT [ "/bin/bash" ,"/start.sh"]
 
 EXPOSE 9999
